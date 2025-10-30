@@ -1,0 +1,69 @@
+# =========================
+# Node / React
+# =========================
+node_modules/
+build/
+dist/
+.cache/
+coverage/
+.env
+.env.local
+.env.development.local
+.env.production.local
+.env.test.local
+
+# Amplify generated files
+amplify/
+aws-exports.js  # optional – commit only if you want teammates to reuse same config
+
+# =========================
+# AWS CDK
+# =========================
+cdk.out/
+cdk.context.json
+*.asset.*
+*.zip
+
+# CDK synthesized templates
+*.template.json
+*.template.yaml
+
+# =========================
+# Lambda
+# =========================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.env/
+.venv/
+venv/
+env/
+lambda/__pycache__/
+lambda/*.zip
+
+# =========================
+# IDE / OS junk
+# =========================
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+.vscode/
+.idea/
+*.swp
+
+# =========================
+# Security / credentials
+# =========================
+*.pem
+*.key
+*.crt
+*.p12
+*.cer
+.aws/
+*.credentials
+*.secrets.json
+
+outputs.txt
