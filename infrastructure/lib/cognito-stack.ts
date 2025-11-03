@@ -75,6 +75,28 @@ export class CognitoStack extends cdk.Stack {
       }
     );
 
+    //Allow authenticated users to access their own private files
+    this.authenticatedRole.addToPolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: [
+          "s3:ListBucket",
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject",
+        ],
+        resources: [
+          // Allow listing the bucket
+          "arn:aws:s3:::text-to-speech-input-dylan-v2",
+          // Allow read/write in private folder
+          "arn:aws:s3:::text-to-speech-input-dylan-v2/private/${cognito-identity.amazonaws.com:sub}/*",
+          // Same for output bucket
+          "arn:aws:s3:::text-to-speech-output-dylan-v2",
+          "arn:aws:s3:::text-to-speech-output-dylan-v2/private/${cognito-identity.amazonaws.com:sub}/*",
+        ],
+      })
+    );
+
     //Outputs
     new cdk.CfnOutput(this, "UserPoolId", { value: this.userPool.userPoolId });
     new cdk.CfnOutput(this, "UserPoolClientId", {
