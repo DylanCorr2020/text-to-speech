@@ -26,7 +26,10 @@ export class StorageAndLambdaStack extends cdk.Stack {
             s3.HttpMethods.DELETE,
             s3.HttpMethods.HEAD,
           ],
-          allowedOrigins: ["http://localhost:3000"],
+          allowedOrigins: [
+            "http://localhost:3000",
+            "https://d1cau4pyc1cz7k.cloudfront.net",
+          ],
           exposedHeaders: [],
         },
       ],
@@ -44,13 +47,16 @@ export class StorageAndLambdaStack extends cdk.Stack {
             s3.HttpMethods.DELETE,
             s3.HttpMethods.HEAD,
           ],
-          allowedOrigins: ["http://localhost:3000"],
+          allowedOrigins: [
+            "http://localhost:3000",
+            "https://d1cau4pyc1cz7k.cloudfront.net",
+          ],
           exposedHeaders: [],
         },
       ],
     });
 
-    // 🎯 Lambda Function
+    // Lambda Function
     this.ttsLambda = new lambda.Function(this, "TextToSpeechLambdaV2", {
       runtime: lambda.Runtime.PYTHON_3_9,
       handler: "textToSpeechHandler.lambda_handler",
@@ -74,14 +80,14 @@ export class StorageAndLambdaStack extends cdk.Stack {
       })
     );
 
-    // 🔔 Add Event Notification
+    //Add Event Notification
     this.inputBucket.addEventNotification(
       s3.EventType.OBJECT_CREATED_PUT,
       new s3n.LambdaDestination(this.ttsLambda),
       { prefix: "private/", suffix: ".txt" }
     );
 
-    // 🧾 Outputs
+    //Outputs
     new cdk.CfnOutput(this, "InputBucketName", {
       value: this.inputBucket.bucketName,
     });

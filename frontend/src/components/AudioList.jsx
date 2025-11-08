@@ -9,12 +9,12 @@ function AudioList() {
   useEffect(() => {
     (async () => {
       try {
-        // ✅ Make sure user is signed in
+        // Make sure user is signed in
         const currentUser = await getCurrentUser();
         console.log("👤 Logged in as:", currentUser.username);
         setUser(currentUser);
 
-        // ✅ Once user is ready, list files
+        // Once user is ready, list files
         const urls = await listAudioFiles();
         console.log("🎵 Found audio files:", urls);
         setAudioFiles(urls);
