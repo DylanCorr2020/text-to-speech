@@ -1,4 +1,5 @@
 import { list, getUrl } from "aws-amplify/storage";
+import { fetchAuthSession } from "aws-amplify/auth";
 import { setAmplifyBucket } from "../aws-configure-bucket";
 
 const OUTPUT_BUCKET = "text-to-speech-output-dylan-v2";
@@ -6,41 +7,69 @@ const OUTPUT_BUCKET = "text-to-speech-output-dylan-v2";
 export async function listAudioFiles() {
   console.log("🎧 Listing files from OUTPUT bucket...");
 
-  // Switch Amplify to the output bucket
   setAmplifyBucket(OUTPUT_BUCKET);
 
-  // Let Amplify handle the "private/<identityId>" folder automatically
-  const listed = await list({
-    path: "", // empty path — Amplify figures out user's private folder
-    options: { accessLevel: "private" },
-  });
+  try {
+    const session = await fetchAuthSession({ forceRefresh: false });
+    const identityId = session.identityId;
+    console.log("🆔 Current User Identity ID:", identityId);
 
-  console.log("📦 Raw list result:", listed);
+    if (!identityId) {
+      throw new Error("Identity ID is undefined.");
+    }
 
-  if (!listed.items || listed.items.length === 0) {
-    console.log("No files found in output bucket.");
-    console.log(
-      "🔑 Paths returned:",
-      listed.items.map((i) => i.path)
+    const listed = await list({
+      path: "",
+      options: { accessLevel: "private" },
+    });
+
+    console.log("📦 Raw list result:", listed);
+
+    if (!listed.items || listed.items.length === 0) {
+      console.log("No files found for this user.");
+      return [];
+    }
+
+    // ✅ CRITICAL: Filter to ONLY current user's files before getting URLs
+    const currentUserFiles = listed.items.filter(
+      (item) =>
+        item.path &&
+        item.path.includes(identityId) &&
+        item.path.toLowerCase().endsWith(".mp3")
     );
+
+    console.log("👤 Current user's MP3 files:", currentUserFiles);
+
+    const urls = await Promise.all(
+      currentUserFiles.map(async (item) => {
+        try {
+          const { url } = await getUrl({
+            path: item.path,
+            options: { accessLevel: "private" },
+          });
+          console.log("✅ Accessible URL:", item.path);
+          return {
+            key: item.path,
+            url,
+            fileName: item.path.split("/").pop(),
+          };
+        } catch (error) {
+          console.log(
+            "❌ Inaccessible file (will be filtered out):",
+            item.path
+          );
+          return null; // This will be filtered out
+        }
+      })
+    );
+
+    // Remove any null results (files we couldn't access)
+    const accessibleUrls = urls.filter((url) => url !== null);
+
+    console.log("🎵 Accessible audio files:", accessibleUrls);
+    return accessibleUrls;
+  } catch (err) {
+    console.error("❌ listAudioFiles error:", err);
     return [];
   }
-
-  // Filter only MP3 files and get signed URLs
-  const urls = await Promise.all(
-    listed.items
-      .filter(
-        (item) => item?.eTag && item?.path?.toLowerCase().endsWith(".mp3")
-      )
-      .map(async (item) => {
-        const { url } = await getUrl({
-          path: item.path, // use path, not key
-          options: { accessLevel: "private" },
-        });
-        return { key: item.path, url }; // key can still be path for display
-      })
-  );
-
-  console.log("🎵 Found audio files:", urls);
-  return urls;
 }

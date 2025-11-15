@@ -7,6 +7,8 @@ import HomePage from "./pages/HomePage";
 
 Amplify.configure(awsconfig);
 
+
+
 function App() {
   return (
     <Authenticator>
