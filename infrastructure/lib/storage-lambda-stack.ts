@@ -4,6 +4,7 @@ import * as s3 from "aws-cdk-lib/aws-s3";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as s3n from "aws-cdk-lib/aws-s3-notifications";
+import { Duration } from "aws-cdk-lib";
 
 export class StorageAndLambdaStack extends cdk.Stack {
   public readonly inputBucket: s3.Bucket;
@@ -31,6 +32,16 @@ export class StorageAndLambdaStack extends cdk.Stack {
             "https://d1cau4pyc1cz7k.cloudfront.net",
           ],
           exposedHeaders: [],
+        },
+      ],
+
+      //clean up text files
+      lifecycleRules: [
+        {
+          id: "DeleteInputTextFiles",
+          prefix: "private/",
+          enabled: true,
+          expiration: Duration.days(7),
         },
       ],
     });
