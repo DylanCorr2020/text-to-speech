@@ -4,6 +4,7 @@
 
 import React, { useState } from "react";
 import { uploadFile } from "../api/uploadFile";
+import Button from "./UI/Button";
 
 
 function Upload() {
@@ -32,12 +33,12 @@ function Upload() {
 
   return (
     <div style={{ textAlign: "center", marginTop: "40px" }}>
-      <h3>📄 Upload Text File</h3>
+      <h3>📄 Upload Your Study Notes</h3>
       <input type="file" accept=".txt" onChange={(e) => setFile(e.target.files[0])} />
       <br />
-      <button onClick={handleUpload}>
+      <Button onClick={handleUpload}>
         Upload
-      </button>
+      </Button>
       <p style={{ marginTop: "10px" }}>{message}</p>
     </div>
   );

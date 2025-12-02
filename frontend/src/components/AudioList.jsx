@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { listAudioFiles } from "../api/listAudioFiles";
 import { deleteAudioFile } from "../api/deleteAudioFiles";
 import { getCurrentUser } from "aws-amplify/auth";
+import Button from "./UI/Button";
 
 function AudioList() {
   const [audioFiles, setAudioFiles] = useState([]);
@@ -95,21 +96,12 @@ function AudioList() {
         }}
       >
         <h3>🎧 Your Audio Files</h3>
-        <div>
-          <button
-            onClick={handleManualRefresh}
-            style={{
-              padding: "8px 16px",
-              backgroundColor: "#007bff",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-              marginRight: "10px",
-            }}
-          >
-            🔄 Refresh
-          </button>
+      
+          <Button 
+            onClick={handleManualRefresh}>
+            Refresh
+          </Button>
+          <div>
           <small style={{ color: "#666" }}>
             Last refreshed: {new Date(lastRefresh).toLocaleTimeString()}
           </small>
