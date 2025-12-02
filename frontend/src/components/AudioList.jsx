@@ -12,70 +12,48 @@ function AudioList() {
   const [deletingFiles, setDeletingFiles] = useState({});
   const refreshIntervalRef = useRef(null);
 
-  // Function to refresh files
+  // Refresh files
   const refreshFiles = async () => {
     try {
-      console.log("🔄 Refreshing file list...");
       const urls = await listAudioFiles();
-      setAudioFiles(urls); 
+      setAudioFiles(urls);
+      setLastRefresh(Date.now());
     } catch (err) {
       console.error("Refresh error:", err);
     }
   };
 
-  // Function to handle file deletion
+  // Delete
   const handleDelete = async (fileKey, fileName) => {
-    // Confirm deletion
-    if (!window.confirm(`Are you sure you want to delete "${fileName}"?`)) {
-      return;
-    }
+    if (!window.confirm(`Delete "${fileName}"?`)) return;
 
     try {
-      // Set deleting state for this file
       setDeletingFiles((prev) => ({ ...prev, [fileKey]: true }));
-
-      console.log("🗑️ Deleting file:", fileKey);
       await deleteAudioFile(fileKey);
-
-      // Remove from local state immediately
       setAudioFiles((prev) => prev.filter((file) => file.key !== fileKey));
-
-      console.log("✅ File deleted from state");
     } catch (err) {
-      console.error("❌ Delete failed:", err);
-      alert(`Failed to delete file: ${err.message}`);
+      console.error("Delete error:", err);
     } finally {
-      // Clear deleting state
       setDeletingFiles((prev) => ({ ...prev, [fileKey]: false }));
     }
   };
 
   useEffect(() => {
-    // Initial load
     (async () => {
       try {
         const currentUser = await getCurrentUser();
         setUser(currentUser);
         await refreshFiles();
-      } catch (err) {
-        console.error("Error loading files:", err);
       } finally {
         setLoading(false);
       }
     })();
 
-    // Set up auto-refresh every 10 seconds
     refreshIntervalRef.current = setInterval(refreshFiles, 10000);
 
-    // Cleanup interval on unmount
-    return () => {
-      if (refreshIntervalRef.current) {
-        clearInterval(refreshIntervalRef.current);
-      }
-    };
+    return () => clearInterval(refreshIntervalRef.current);
   }, []);
 
-  // Manual refresh function
   const handleManualRefresh = async () => {
     setLoading(true);
     await refreshFiles();
@@ -86,98 +64,131 @@ function AudioList() {
   if (!user) return <p>Please sign in to view your audio files.</p>;
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div
+      style={{
+        maxWidth: "800px",
+        margin: "0 auto",
+        background: "white",
+        padding: "30px",
+        borderRadius: "16px",
+        boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
+      }}
+    >
+      {/* Header */}
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
+          marginBottom: "24px",
           alignItems: "center",
-          marginBottom: "20px",
         }}
       >
-        <h3>🎧 Your Audio Files</h3>
-      
-          <Button 
-            onClick={handleManualRefresh}>
-            Refresh
-          </Button>
-          <div>
-          <small style={{ color: "#666" }}>
-            Last refreshed: {new Date(lastRefresh).toLocaleTimeString()}
+        <h3 style={{ margin: 0, fontSize: "22px", fontWeight: 600 }}>
+          🎧 Your Audio Files
+        </h3>
+
+        <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+          <Button onClick={handleManualRefresh}>Refresh</Button>
+
+          <small
+            style={{
+              background: "#f3f4f6",
+              padding: "6px 10px",
+              borderRadius: "8px",
+              color: "#555",
+            }}
+          >
+            Updated {new Date(lastRefresh).toLocaleTimeString()}
           </small>
         </div>
       </div>
 
+      {/* List */}
       {audioFiles.length === 0 ? (
-        <p>
-          No audio files found. Upload a text file and it will appear here
-          automatically!
+        <p style={{ textAlign: "center", color: "#666" }}>
+          No audio files yet — upload a text file to generate one!
         </p>
       ) : (
-        <ul style={{ listStyle: "none", padding: 0 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           {audioFiles.map((file) => {
             const fileName = file.key.split("/").pop();
             const isDeleting = deletingFiles[file.key];
 
             return (
-              <li
+              <div
                 key={file.key}
                 style={{
-                  marginBottom: "15px",
-                  padding: "15px",
-                  border: "1px solid #ddd",
-                  borderRadius: "8px",
-                  background: isDeleting ? "#f8f9fa" : "white",
-                  opacity: isDeleting ? 0.6 : 1,
+                  padding: "20px",
+                  background: "white",
+                  borderRadius: "12px",
+                  border: "1px solid #eee",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "20px",
+                  opacity: isDeleting ? 0.5 : 1,
+                  transition: "0.2s",
                 }}
               >
+                {/* Icon */}
                 <div
                   style={{
+                    width: "48px",
+                    height: "48px",
+                    borderRadius: "12px",
+                    background: "#eef2ff",
                     display: "flex",
-                    alignItems: "flex-start",
-                    gap: "15px",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "24px",
                   }}
                 >
-                  {/* Audio Player */}
-                  <div style={{ flex: 1 }}>
-                    <audio
-                      controls
-                      src={file.url}
-                      style={{ width: "100%", maxWidth: "400px" }}
-                    />
-                    <p
-                      style={{
-                        margin: "8px 0 0 0",
-                        fontSize: "14px",
-                        color: "#666",
-                      }}
-                    >
-                      {fileName}
-                    </p>
-                  </div>
+                  🎵
+                </div>
 
-                  {/* Delete Button */}
-                  <button
-                    onClick={() => handleDelete(file.key, fileName)}
-                    disabled={isDeleting}
+                {/* Main column */}
+                <div style={{ flex: 1 }}>
+                  <p
                     style={{
-                      padding: "6px 12px",
-                      backgroundColor: isDeleting ? "#6c757d" : "#dc3545",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "4px",
-                      cursor: isDeleting ? "not-allowed" : "pointer",
-                      fontSize: "12px",
-                      whiteSpace: "nowrap",
+                      margin: 0,
+                      fontWeight: 500,
+                      fontSize: "16px",
                     }}
                   >
-                    {isDeleting ? "⏳ Deleting..." : "🗑️ Delete"}
-                  </button>
+                    {fileName}
+                  </p>
+
+                  <audio
+                    controls
+                    src={file.url}
+                    style={{
+                      marginTop: "8px",
+                      width: "100%",
+                      maxWidth: "500px",
+                    }}
+                  />
                 </div>
-              </li>
+
+                {/* Delete */}
+                <button
+                  onClick={() => handleDelete(file.key, fileName)}
+                  disabled={isDeleting}
+                  style={{
+                    padding: "10px 14px",
+                    background: "#ef4444",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {isDeleting ? "Deleting..." : "🗑 Delete"}
+                </button>
+              </div>
             );
           })}
-        </ul>
+        </div>
       )}
     </div>
   );

@@ -1,27 +1,17 @@
-
-// React, useState: lets you track user interactions and store data (like which file is selected or what message to show).
-// uploadFile: this is a helper function I created that abstracts the actual AWS Amplify call to upload a file to S3.
-
 import React, { useState } from "react";
 import { uploadFile } from "../api/uploadFile";
 import Button from "./UI/Button";
 
-
 function Upload() {
-  //file holds the file user chooses
   const [file, setFile] = useState(null);
-  //message holds feedback to show on the screen
   const [message, setMessage] = useState("");
-  
-  //Prevents running the upload if the user hasn’t picked a file yet.
+
   const handleUpload = async () => {
     if (!file) {
       setMessage("Please select a file first!");
       return;
     }
-    
-    //call API helper passes the file to your upload helper which 
-    // then does internally 
+
     try {
       await uploadFile(file);
       setMessage(`✅ Uploaded: ${file.name}`);
@@ -32,14 +22,53 @@ function Upload() {
   };
 
   return (
-    <div style={{ textAlign: "center", marginTop: "40px" }}>
-      <h3>📄 Upload Your Study Notes</h3>
-      <input type="file" accept=".txt" onChange={(e) => setFile(e.target.files[0])} />
-      <br />
-      <Button onClick={handleUpload}>
-        Upload
-      </Button>
-      <p style={{ marginTop: "10px" }}>{message}</p>
+    <div style={{ textAlign: "center" }}>
+      <h3 style={{ marginBottom: "20px", fontSize: "20px", fontWeight: 600 }}>
+        📄 Upload Your Study Notes
+      </h3>
+
+      {/* Upload Box */}
+      <div
+        style={{
+          border: "2px dashed #c7c9d1",
+          borderRadius: "12px",
+          padding: "20px",
+          background: "#fafbff",
+          cursor: "pointer",
+          transition: "0.2s",
+          marginBottom: "10px",
+        }}
+        onClick={() => document.getElementById("file-input").click()}
+      >
+        <p style={{ margin: 0, color: "#6b7280" }}>
+          Drag & drop your .txt file here
+        </p>
+        <p style={{ margin: "4px 0 0 0", fontSize: "14px", color: "#9ca3af" }}>
+          or click to select
+        </p>
+      </div>
+
+      {/* Hidden real input */}
+      <input
+        id="file-input"
+        type="file"
+        accept=".txt"
+        style={{ display: "none" }}
+        onChange={(e) => setFile(e.target.files[0])}
+      />
+
+      {/* File name */}
+      {file && (
+        <p style={{ margin: "8px 0", color: "#4b5563" }}>
+          Selected: <strong>{file.name}</strong>
+        </p>
+      )}
+
+      <Button onClick={handleUpload}>Upload</Button>
+
+      <p style={{ marginTop: "10px", color: "#555", minHeight: "20px" }}>
+        {message}
+      </p>
     </div>
   );
 }
