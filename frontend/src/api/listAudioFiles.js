@@ -47,7 +47,7 @@ export async function listAudioFiles() {
             path: item.path,
             options: { accessLevel: "private" },
           });
-          console.log("✅ Accessible URL:", item.path);
+          console.log("Accessible URL:", item.path);
           return {
             key: item.path,
             url,
@@ -55,7 +55,7 @@ export async function listAudioFiles() {
           };
         } catch (error) {
           console.log(
-            "❌ Inaccessible file (will be filtered out):",
+            "Inaccessible file (will be filtered out):",
             item.path
           );
           return null; // This will be filtered out

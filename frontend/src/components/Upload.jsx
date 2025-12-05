@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import { uploadFile } from "../api/uploadFile";
 import Button from "./UI/Button";
+import Modal from "./UI/Modal";
 
 function Upload() {
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState("");
+  const [isOpen, setIsOpen] = useState(false)
 
   const handleUpload = async () => {
     if (!file) {
-      setMessage("Please select a file first!");
-      return;
+      /* setMessage("Please select a file first!"); */
+      setIsOpen(true)
+        return;
     }
 
     try {
@@ -65,6 +68,10 @@ function Upload() {
       )}
 
       <Button onClick={handleUpload}>Upload</Button>
+
+      <Modal open = {isOpen} onClose ={() => setIsOpen(false)}>
+         Please select a file first!
+      </Modal>
 
       <p style={{ marginTop: "10px", color: "#555", minHeight: "20px" }}>
         {message}

@@ -7,7 +7,7 @@ const OUTPUT_BUCKET = "text-to-speech-output-dylan-v2";
 export async function deleteAudioFile(fileKey) {
   console.log("🗑️ Attempting to delete file:", fileKey);
 
-  // CRITICAL: Set Amplify to use the OUTPUT bucket (same as listAudioFiles)
+ 
   setAmplifyBucket(OUTPUT_BUCKET);
 
   try {
@@ -33,7 +33,7 @@ export async function deleteAudioFile(fileKey) {
       path: fileKey,
       options: {
         accessLevel: "private",
-        // ❌ REMOVE the bucket option - let Amplify configuration handle it
+        
       },
     });
 
