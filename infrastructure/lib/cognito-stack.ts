@@ -24,6 +24,10 @@ export class CognitoStack extends cdk.Stack {
       selfSignUpEnabled: true,
       signInAliases: { email: true },
       autoVerify: { email: true },
+      
+      customAttributes: {
+        firstName: new cognito.StringAttribute({ mutable: true }),
+      },
     });
 
     //Create App Client (for frontend)

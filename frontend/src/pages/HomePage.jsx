@@ -4,6 +4,9 @@ import AudioList from "../components/AudioList";
 import Navbar from "../components/Navbar";
 
 function HomePage({ user, onSignOut }) {
+
+ 
+
   return (
     <div style={{ background: "#f8fafc", minHeight: "100vh" }}>
       <Navbar user={user} onSignOut={onSignOut} />

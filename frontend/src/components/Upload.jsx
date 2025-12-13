@@ -7,6 +7,7 @@ function Upload() {
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState("");
   const [isOpen, setIsOpen] = useState(false)
+  const [isUpload ,setIsUpload] = useState(false)
 
   const handleUpload = async () => {
     if (!file) {
@@ -17,7 +18,8 @@ function Upload() {
 
     try {
       await uploadFile(file);
-      setMessage(`✅ Uploaded: ${file.name}`);
+      //setMessage(`✅ Uploaded: ${file.name}`);
+      setIsUpload(true)
     } catch (err) {
       console.error("Upload error:", err);
       setMessage("❌ Upload failed — check console for details.");
@@ -44,10 +46,10 @@ function Upload() {
         onClick={() => document.getElementById("file-input").click()}
       >
         <p style={{ margin: 0, color: "#6b7280" }}>
-          Drag & drop your .txt file here
+          Click here to upload your .txt file
         </p>
         <p style={{ margin: "4px 0 0 0", fontSize: "14px", color: "#9ca3af" }}>
-          or click to select
+          
         </p>
       </div>
 
@@ -71,6 +73,10 @@ function Upload() {
 
       <Modal open = {isOpen} onClose ={() => setIsOpen(false)}>
          Please select a file first!
+      </Modal>
+
+       <Modal open = {isUpload} onClose ={() => setIsUpload(false)}>
+        ✅ Uploaded Audio file
       </Modal>
 
       <p style={{ marginTop: "10px", color: "#555", minHeight: "20px" }}>

@@ -3,6 +3,7 @@ import { listAudioFiles } from "../api/listAudioFiles";
 import { deleteAudioFile } from "../api/deleteAudioFiles";
 import { getCurrentUser } from "aws-amplify/auth";
 import Button from "./UI/Button";
+import DeleteModal from "./UI/DeleteModal";
 
 function AudioList() {
   const [audioFiles, setAudioFiles] = useState([]);
@@ -12,7 +13,11 @@ function AudioList() {
   const [deletingFiles, setDeletingFiles] = useState({});
   const refreshIntervalRef = useRef(null);
 
-  // Refresh files
+  // Modal state
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  // Refresh list of files
   const refreshFiles = async () => {
     try {
       const urls = await listAudioFiles();
@@ -23,19 +28,10 @@ function AudioList() {
     }
   };
 
-  // Delete
-  const handleDelete = async (fileKey, fileName) => {
-    if (!window.confirm(`Delete "${fileName}"?`)) return;
-
-    try {
-      setDeletingFiles((prev) => ({ ...prev, [fileKey]: true }));
-      await deleteAudioFile(fileKey);
-      setAudioFiles((prev) => prev.filter((file) => file.key !== fileKey));
-    } catch (err) {
-      console.error("Delete error:", err);
-    } finally {
-      setDeletingFiles((prev) => ({ ...prev, [fileKey]: false }));
-    }
+  // Open delete modal
+  const handleDelete = (fileKey, fileName) => {
+    setSelectedFile({ fileKey, fileName });
+    setDeleteModalOpen(true);
   };
 
   useEffect(() => {
@@ -49,8 +45,8 @@ function AudioList() {
       }
     })();
 
+    // Auto-refresh every 10 seconds
     refreshIntervalRef.current = setInterval(refreshFiles, 10000);
-
     return () => clearInterval(refreshIntervalRef.current);
   }, []);
 
@@ -145,7 +141,7 @@ function AudioList() {
                   🎵
                 </div>
 
-                {/* Main column */}
+                {/* Main content */}
                 <div style={{ flex: 1 }}>
                   <p
                     style={{
@@ -168,7 +164,7 @@ function AudioList() {
                   />
                 </div>
 
-                {/* Delete */}
+                {/* Delete button */}
                 <button
                   onClick={() => handleDelete(file.key, fileName)}
                   disabled={isDeleting}
@@ -190,6 +186,40 @@ function AudioList() {
           })}
         </div>
       )}
+
+      {/* Delete Modal — only rendered ONCE */}
+      <DeleteModal
+        open={deleteModalOpen}
+        onCancel={() => setDeleteModalOpen(false)}
+        onConfirm={async () => {
+          setDeleteModalOpen(false);
+
+          try {
+            setDeletingFiles((prev) => ({
+              ...prev,
+              [selectedFile.fileKey]: true,
+            }));
+
+            await deleteAudioFile(selectedFile.fileKey);
+
+            setAudioFiles((prev) =>
+              prev.filter((file) => file.key !== selectedFile.fileKey)
+            );
+          } catch (err) {
+            console.error("Delete error:", err);
+          } finally {
+            setDeletingFiles((prev) => ({
+              ...prev,
+              [selectedFile.fileKey]: false,
+            }));
+          }
+        }}
+      >
+        <p>
+          Are you sure you want to delete{" "}
+          <strong>{selectedFile?.fileName}</strong>?
+        </p>
+      </DeleteModal>
     </div>
   );
 }
