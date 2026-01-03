@@ -1,0 +1,129 @@
+/* Navbar.module.css */
+
+/* Base styles for all devices */
+.navbar {
+    width: 100%;
+    padding: 16px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.appName {
+    margin: 0;
+    font-weight: 600;
+    font-size: clamp(16px, 4vw, 20px);
+    /* Responsive font size */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rightContainer {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.welcomeText {
+    margin: 0;
+    font-weight: 600;
+    font-size: clamp(14px, 3vw, 20px);
+    /* Responsive font size */
+    color: #333;
+    white-space: nowrap;
+}
+
+.loadingText {
+    font-size: 14px;
+    color: #555;
+}
+
+.signOutButton {
+    padding: 8px 16px;
+    background: #6366f1;
+    border: none;
+    color: white;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+.signOutButton:hover {
+    background: #4f46e5;
+}
+
+/* Tablet styles (max-width: 768px) */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 12px 20px;
+        flex-wrap: wrap;
+        /* Allow wrapping if needed */
+    }
+
+    .rightContainer {
+        gap: 12px;
+    }
+
+    .welcomeText {
+        /* Optional: hide on very small screens */
+        display: none;
+    }
+}
+
+/* Mobile styles (max-width: 480px) */
+@media (max-width: 480px) {
+    .navbar {
+        padding: 10px 16px;
+        flex-direction: column;
+        /* Stack vertically */
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .rightContainer {
+        width: 100%;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .appName {
+        font-size: 18px;
+    }
+
+    .welcomeText {
+        display: block;
+        /* Show again but smaller */
+        font-size: 14px;
+    }
+
+    .signOutButton {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+}
+
+/* Extra small screens (max-width: 360px) */
+@media (max-width: 360px) {
+    .appName {
+        font-size: 16px;
+    }
+
+    .rightContainer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .welcomeText {
+        font-size: 13px;
+    }
+}

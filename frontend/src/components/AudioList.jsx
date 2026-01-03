@@ -4,6 +4,7 @@ import { deleteAudioFile } from "../api/deleteAudioFiles";
 import { getCurrentUser } from "aws-amplify/auth";
 import Button from "./UI/Button";
 import DeleteModal from "./UI/DeleteModal";
+import styles from "../styles/AudioList.module.css";
 
 function AudioList() {
   const [audioFiles, setAudioFiles] = useState([]);
@@ -45,8 +46,6 @@ function AudioList() {
       }
     })();
 
-    // Auto-refresh every 10 seconds
-    refreshIntervalRef.current = setInterval(refreshFiles, 10000);
     return () => clearInterval(refreshIntervalRef.current);
   }, []);
 
@@ -60,52 +59,27 @@ function AudioList() {
   if (!user) return <p>Please sign in to view your audio files.</p>;
 
   return (
-    <div
-      style={{
-        maxWidth: "800px",
-        margin: "0 auto",
-        background: "white",
-        padding: "30px",
-        borderRadius: "16px",
-        boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
-      }}
-    >
+    <div>
       {/* Header */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginBottom: "24px",
-          alignItems: "center",
-        }}
-      >
-        <h3 style={{ margin: 0, fontSize: "22px", fontWeight: 600 }}>
-          🎧 Your Audio Files
-        </h3>
+      <div className={styles.header}>
+        <h3 className={styles.headerTitle}>🎧 Your Audio Files</h3>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+        <div className={styles.headerButton}>
           <Button onClick={handleManualRefresh}>Refresh</Button>
-
-          <small
-            style={{
-              background: "#f3f4f6",
-              padding: "6px 10px",
-              borderRadius: "8px",
-              color: "#555",
-            }}
-          >
-            Updated {new Date(lastRefresh).toLocaleTimeString()}
-          </small>
         </div>
+
+        <small className={styles.lastUpdated}>
+            Updated {new Date(lastRefresh).toLocaleTimeString()}
+        </small>
       </div>
 
       {/* List */}
       {audioFiles.length === 0 ? (
-        <p style={{ textAlign: "center", color: "#666" }}>
+        <p className={styles.emptyMessage}>
           No audio files yet — upload a text file to generate one!
         </p>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <div>
           {audioFiles.map((file) => {
             const fileName = file.key.split("/").pop();
             const isDeleting = deletingFiles[file.key];
@@ -113,81 +87,43 @@ function AudioList() {
             return (
               <div
                 key={file.key}
-                style={{
-                  padding: "20px",
-                  background: "white",
-                  borderRadius: "12px",
-                  border: "1px solid #eee",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "20px",
-                  opacity: isDeleting ? 0.5 : 1,
-                  transition: "0.2s",
-                }}
+                className={`${styles.audioItem} ${isDeleting ? styles.deleting : ''}`}
               >
-                {/* Icon */}
-                <div
-                  style={{
-                    width: "48px",
-                    height: "48px",
-                    borderRadius: "12px",
-                    background: "#eef2ff",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "24px",
-                  }}
-                >
-                  🎵
-                </div>
+                {/* Icon and file info */}
+                <div className={styles.audioContent}>
+                 
 
-                {/* Main content */}
-                <div style={{ flex: 1 }}>
-                  <p
-                    style={{
-                      margin: 0,
-                      fontWeight: 500,
-                      fontSize: "16px",
-                    }}
-                  >
-                    {fileName}
-                  </p>
+                  {/* Main content */}
+                  <div className={styles.fileInfo}>
+                    <p className={styles.fileName}>
+                      {fileName}
+                    </p>
 
-                  <audio
-                    controls
-                    src={file.url}
-                    style={{
-                      marginTop: "8px",
-                      width: "100%",
-                      maxWidth: "500px",
-                    }}
-                  />
+                    <audio
+                      controls
+                      src={file.url}
+                      className={styles.audioPlayer}
+                    />
+                  </div>
                 </div>
 
                 {/* Delete button */}
-                <button
-                  onClick={() => handleDelete(file.key, fileName)}
-                  disabled={isDeleting}
-                  style={{
-                    padding: "10px 14px",
-                    background: "#ef4444",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {isDeleting ? "Deleting..." : "🗑 Delete"}
-                </button>
+                <div className={styles.deleteButtonContainer}>
+                  <button
+                    onClick={() => handleDelete(file.key, fileName)}
+                    disabled={isDeleting}
+                    className={styles.deleteButton}
+                  >
+                    {isDeleting ? "Deleting..." : "🗑 Delete"}
+                  </button>
+                </div>
               </div>
             );
           })}
         </div>
       )}
 
-      {/* Delete Modal — only rendered ONCE */}
+      {/* Delete Modal */}
       <DeleteModal
         open={deleteModalOpen}
         onCancel={() => setDeleteModalOpen(false)}

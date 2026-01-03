@@ -51,7 +51,7 @@ export default function Modal({ open, children, onClose }) {
         <div style={{ marginBottom: "12px", fontSize: "16px" }}>{children}</div>
 
         <button style={CLOSE_BUTTON} onClick={onClose}>
-          Close
+          Ok
         </button>
       </div>
     </>,
