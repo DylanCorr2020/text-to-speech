@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { uploadFile } from "../api/uploadFile";
 import Button from "./UI/Button";
 import Modal from "./UI/Modal";
+import mammoth from "mammoth";
+
+
 
 function Upload() {
   const [file, setFile] = useState(null);
@@ -9,22 +12,51 @@ function Upload() {
   const [isOpen, setIsOpen] = useState(false)
   const [isUpload ,setIsUpload] = useState(false)
 
-  const handleUpload = async () => {
-    if (!file) {
-      /* setMessage("Please select a file first!"); */
-      setIsOpen(true)
-        return;
+ const handleUpload = async () => {
+  if (!file) {
+    setIsOpen(true);
+    return;
+  }
+
+  try {
+    let fileToUpload = file;
+
+    //DOCX → TXT conversion
+    if (file.name.endsWith(".docx")) {
+      const arrayBuffer = await file.arrayBuffer();
+
+      const result = await mammoth.extractRawText({ arrayBuffer });
+      const text = result.value;
+
+      fileToUpload = new File(
+        [text],
+        file.name.replace(".docx", ".txt"),
+        { type: "text/plain" }
+      );
+    }
+    else if(file.name.endsWith(".html")) {
+      const htmlString = await file.text()
+
+      const parser = new DOMParser();
+      const parsedDocument = parser.parseFromString(htmlString, "text/html")
+      const text = parsedDocument.body.innerText
+
+      fileToUpload = new File(
+        [text],
+        file.name.replace(".html", ".txt"),
+        { type: "text/plain" }
+      );
+
     }
 
-    try {
-      await uploadFile(file);
-      //setMessage(`✅ Uploaded: ${file.name}`);
-      setIsUpload(true)
-    } catch (err) {
-      console.error("Upload error:", err);
-      setMessage("❌ Upload failed — check console for details.");
-    }
-  };
+    await uploadFile(fileToUpload);
+    setIsUpload(true);
+
+  } catch (err) {
+    console.error("Upload error:", err);
+    setMessage("❌ Upload failed — check console for details.");
+  }
+};
 
   return (
     <div style={{ textAlign: "center" }}>
@@ -46,7 +78,7 @@ function Upload() {
         onClick={() => document.getElementById("file-input").click()}
       >
         <p style={{ margin: 0, color: "#6b7280" }}>
-          Click here to upload your .txt file
+          Click here to upload your file (.txt, .html, .docx)
         </p>
         <p style={{ margin: "4px 0 0 0", fontSize: "14px", color: "#9ca3af" }}>
           
@@ -57,7 +89,7 @@ function Upload() {
       <input
         id="file-input"
         type="file"
-        accept=".txt"
+        accept=".txt,.docx,.html"
         style={{ display: "none" }}
         onChange={(e) => setFile(e.target.files[0])}
       />

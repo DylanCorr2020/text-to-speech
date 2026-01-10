@@ -6,13 +6,14 @@ import os            # Used to work with environment variables and file paths
 from urllib.parse import unquote_plus
 
 
+
 # Create AWS service clients
 s3 = boto3.client('s3')        # S3 client for reading and writing files
 polly = boto3.client('polly')  # Polly client for text-to-speech synthesis
 
 def lambda_handler(event, context):
     """
-    AWS Lambda entry point. Triggered automatically when a new .txt file
+    AWS Lambda entry point. Triggered automatically when a new .txt , docx and html file
     is uploaded to the input S3 bucket.
     """
 
@@ -38,7 +39,7 @@ def lambda_handler(event, context):
 
     # --- Read the text content from the downloaded file ---
     with open(tmp_path, 'r') as f:
-        text = f.read()
+         text = f.read()
 
     # --- Use Amazon Polly to synthesize speech from the text ---
     # Polly converts the text into spoken audio and returns an MP3 audio stream.
