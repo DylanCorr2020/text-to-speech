@@ -26,7 +26,14 @@ def lambda_handler(event, context):
     source_bucket = record['s3']['bucket']['name']   # Input bucket name
     #key = record['s3']['object']['key']              # File key (e.g., 'story.txt')
     key = unquote_plus(record['s3']['object']['key']) 
+
     print(f"Triggered by bucket: {source_bucket}, key: {key}")
+
+    head = s3.head_object(Bucket=source_bucket,Key=key)
+    metadata = head.get("Metadata",{})
+    voice = metadata.get("voice","Joanna")
+
+    print(f"Using Polly Voice: {voice}" )
 
 
     # Get the destination (output) bucket name from the Lambda environment variable
@@ -46,7 +53,8 @@ def lambda_handler(event, context):
     response = polly.synthesize_speech(
         Text=text,             # The text content to convert
         OutputFormat='mp3',    # Audio output format
-        VoiceId='Joanna'       # Voice selection (e.g., Joanna, Matthew, Amy, etc.)
+        VoiceId= voice,      # Voice selection (e.g., Joanna, Matthew, Amy, etc.)
+        Engine='neural'
     )
 
     # --- Define the name and path for the new MP3 file ---

@@ -68,10 +68,20 @@ function AudioList() {
           <Button onClick={handleManualRefresh}>Refresh</Button>
         </div>
 
-        <small className={styles.lastUpdated}>
+      </div>
+
+      
+        <small 
+        style={{
+           display: "flex",
+           justifyContent: "flex-end",
+           marginTop: "12px",
+           fontSize: "13px",
+           color: "#6b7280",
+
+        }} className={styles.lastUpdated}>
             Updated {new Date(lastRefresh).toLocaleTimeString()}
         </small>
-      </div>
 
       {/* List */}
       {audioFiles.length === 0 ? (

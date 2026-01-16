@@ -11,6 +11,7 @@ function Upload() {
   const [message, setMessage] = useState("");
   const [isOpen, setIsOpen] = useState(false)
   const [isUpload ,setIsUpload] = useState(false)
+  const [voice , setVoice] = useState("Joanna")
 
  const handleUpload = async () => {
   if (!file) {
@@ -49,7 +50,7 @@ function Upload() {
 
     }
 
-    await uploadFile(fileToUpload);
+    await uploadFile(fileToUpload ,voice);
     setIsUpload(true);
 
   } catch (err) {
@@ -84,6 +85,54 @@ function Upload() {
           
         </p>
       </div>
+
+      <div style={{ marginBottom: "16px", textAlign: "left", maxWidth: "320px", marginInline: "auto" }}>
+  
+  <label
+    htmlFor="voice-select"
+    style={{
+      display: "block",
+      marginBottom: "6px",
+      fontSize: "14px",
+      fontWeight: 500,
+      color: "#374151",
+      textAlign: "center",
+    }}
+  >
+    🎙️ Choose Voice
+  </label>
+
+  <select
+    id="voice-select"
+    value={voice}
+    onChange={(e) => setVoice(e.target.value)}
+    style={{
+      width: "100%",
+      padding: "10px 12px",
+      borderRadius: "8px",
+      border: "1px solid #d1d5db",
+      backgroundColor: "#fff",
+      fontSize: "14px",
+      color: "#111827",
+      cursor: "pointer",
+      outline: "none",
+    }}
+  >
+      <optgroup label="🇺🇸 US English">
+    <option value="Joanna">Joanna (Female)</option>
+    <option value="Matthew">Matthew (Male)</option>
+  </optgroup>
+
+  <optgroup label="🇬🇧 UK English">
+    <option value="Amy">Amy (Female)</option>
+    <option value="Emma">Emma (Female)</option>
+  </optgroup>
+
+  <optgroup label="🇦🇺 Australian">
+    <option value="Olivia">Olivia (Female)</option>
+  </optgroup>
+</select>
+  </div>
 
       {/* Hidden real input */}
       <input
