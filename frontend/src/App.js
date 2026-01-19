@@ -11,10 +11,23 @@ function App() {
   return (
     <Authenticator
       formFields={{
+        signIn: {
+          username: {
+            label: "Email",
+            placeholder: "Enter your email",
+            isRequired: true,
+          },
+        },
         signUp: {
           "custom:firstName": {
             label: "First Name",
             placeholder: "Enter your first name",
+            required: false,
+            order: 1,
+          },
+          family_name: {
+            label: "Last Name",
+            placeholder: "Enter your last name",
             required: false,
             order: 1,
           },
