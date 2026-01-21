@@ -1,17 +1,10 @@
-name: Deploy React Project to CloudFront
-
-on:
-  push:
-    branches:
-      - main
+name: My GitHub Actions Workflow
+on: [push]
 
 jobs:
-  test:
-  runs-on: ubuntu-latest
-  container:
-    image: node:22
-  stages:
-    - uses: actions/checkout@v3
-      with:
-        node-version: 22
-    - run: npm run build
+  testing_github:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hello World
+        run: echo "Hello from GithubActions"
+    
