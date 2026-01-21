@@ -7,4 +7,5 @@ jobs:
     steps:
       - name: Hello World
         run: echo "Hello from GithubActions"
-    
+      - name: Run Build 
+        run: cd | frontend npm run build
