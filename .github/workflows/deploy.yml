@@ -4,10 +4,11 @@ on: [push]
 jobs:
   testing_github:
     runs-on: ubuntu-latest
+    container: node:22
     steps:
       - name: Hello World
         run: echo "Hello from GithubActions"
-      - name: Run Build 
-        run: | 
+      - name: Run Build
+        run: |
           cd frontend 
           npm run build
