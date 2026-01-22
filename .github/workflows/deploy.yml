@@ -5,9 +5,7 @@ jobs:
   testing_github:
     runs-on: ubuntu-latest
     steps:
-      - name: Hello World
-        run: echo "Hello from GithubActions"
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
       - name: Install Dependencies
         working-directory: ./frontend
         run: npm install 
