@@ -4,10 +4,12 @@ on: [push]
 jobs:
   testing_github:
     runs-on: ubuntu-latest
-    container: node:22
     steps:
       - name: Hello World
         run: echo "Hello from GithubActions"
-      - name: Build Frontend
+        uses: actions/checkout@v4
+      - name: Install Dependencies
+        working-directory: ./frontend
+        run: npm install 
+      - name: Run Build
         run: npm run build
-        working-directory: frontend
