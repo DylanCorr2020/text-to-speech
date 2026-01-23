@@ -12,7 +12,7 @@ function AudioList() {
   const [user, setUser] = useState(null);
   const [lastRefresh, setLastRefresh] = useState(Date.now());
   const [deletingFiles, setDeletingFiles] = useState({});
-  const refreshIntervalRef = useRef(null);
+ // const refreshIntervalRef = useRef(null);
 
   // Modal state
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -46,7 +46,7 @@ function AudioList() {
       }
     })();
 
-    return () => clearInterval(refreshIntervalRef.current);
+    //return () => clearInterval(refreshIntervalRef.current);
   }, []);
 
   const handleManualRefresh = async () => {

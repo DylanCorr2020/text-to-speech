@@ -30,7 +30,7 @@ export async function listAudioFiles() {
       return [];
     }
 
-    // ✅ CRITICAL: Filter to ONLY current user's files before getting URLs
+    //Filter to ONLY current user's files before getting URLs
     const currentUserFiles = listed.items.filter(
       (item) =>
         item.path &&
