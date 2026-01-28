@@ -1,14 +1,39 @@
-name: My GitHub Actions Workflow
-on: [push]
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main]
 
 jobs:
-  testing_github:
+  build_and_deploy:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
-      - name: Install Dependencies
-        working-directory: ./frontend
-        run: npm install 
-      - name: Run Build
-        working-directory: ./frontend 
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      # Frontend
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm install
+
+      - name: Build frontend
+        working-directory: frontend
         run: npm run build
+
+      # Infrastructure
+      - name: Install CDK
+        run: npm install -g aws-cdk
+
+      - name: CDK Deploy
+        working-directory: infrastructure
+        run: cdk deploy CloudFrontStack --require-approval never
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: eu-west-1
+
