@@ -57,3 +57,20 @@
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
 }
 
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.headerRight {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.lastUpdated {
+    font-size: 12px;
+    color: #777;
+    white-space: nowrap;
+}

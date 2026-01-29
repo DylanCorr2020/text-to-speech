@@ -61,27 +61,20 @@ function AudioList() {
   return (
     <div>
       {/* Header */}
-      <div className={styles.header}>
-        <h3 className={styles.headerTitle}>🎧 Your Audio Files</h3>
+<div className={styles.header}>
+  <h3 className={styles.headerTitle}>🎧 Your Audio Files</h3>
 
-        <div className={styles.headerButton}>
-          <Button onClick={handleManualRefresh}>Refresh</Button>
-        </div>
-      </div>
+  <div className={styles.headerRight}>
+    <Button onClick={handleManualRefresh}>Refresh</Button>
+
+    <small className={styles.lastUpdated}>
+      Updated {new Date(lastRefresh).toLocaleTimeString()}
+    </small>
+  </div>
+  </div>
 
 
-       <small 
-        style={{
-           
-
-        }} className={styles.lastUpdated}>
-            Updated {new Date(lastRefresh).toLocaleTimeString()}
-        </small>
-
-      
-        
-
-      {/* List */}
+        {/* List */}
       {audioFiles.length === 0 ? (
         <p className={styles.emptyMessage}>
           No audio files yet — upload a text file to generate one!
