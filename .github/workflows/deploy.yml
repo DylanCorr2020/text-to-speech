@@ -26,6 +26,11 @@ jobs:
         run: npm run build
 
       # Infrastructure
+
+      - name: Install CDK Dependencies
+        working-directory: infrastructure
+        run: npm install 
+
       - name: Install CDK
         run: npm install -g aws-cdk
 
