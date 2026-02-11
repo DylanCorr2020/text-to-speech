@@ -5,9 +5,6 @@ Users upload text-based files, select a voice, and automatically receive an MP3 
 
 ---
 
-
-
-
 ## 🧠 What This Project Does
 
 - Upload `.txt`, `.docx`, or `.html` files
@@ -72,10 +69,6 @@ Voice selection is passed from the frontend to the backend using **S3 object met
 - Ideal for media processing pipelines
 
 ---
-
-## 📖 Documentation & Demo
-
-- Full technical walkthrough: [Read the Medium article](https://medium.com/p/79e15c67f2ca/edit)
 
 ## 👤 Author
 
